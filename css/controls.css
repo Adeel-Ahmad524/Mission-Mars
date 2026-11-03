@@ -1,0 +1,366 @@
+/* ==========================================================================
+   MissionMind 2.0 — Controls, Rotary Knobs & Subsystem Cockpit CSS
+   ========================================================================== */
+
+/* ---------- Flight Mode Switcher ---------- */
+.mode-selector-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(13, 21, 39, 0.95);
+  border: 1px solid var(--border);
+  padding: 4px;
+  border-radius: 10px;
+}
+.mode-btn {
+  flex: 1;
+  padding: 7px 12px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-2);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.mode-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+.mode-btn.active[data-mode="manual"] {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: rgba(56, 189, 248, 0.5);
+  color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+}
+.mode-btn.active[data-mode="autonomous"] {
+  background: rgba(168, 85, 247, 0.16);
+  border-color: rgba(168, 85, 247, 0.5);
+  color: #c084fc;
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
+}
+.mode-btn.active[data-mode="hybrid"] {
+  background: rgba(34, 197, 94, 0.16);
+  border-color: rgba(34, 197, 94, 0.5);
+  color: #4ade80;
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.25);
+}
+
+/* Hybrid Authority Toggles */
+.hybrid-authority-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.authority-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: rgba(16, 24, 39, 0.6);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  font-size: 0.74rem;
+}
+
+/* ---------- Rotary Knobs ---------- */
+.knobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 14px 0;
+}
+
+.knob-card {
+  background: linear-gradient(180deg, rgba(16, 24, 40, 0.85), rgba(11, 18, 32, 0.9));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  transition: border-color 0.2s ease;
+}
+.knob-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.knob-wrapper {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  margin: 8px 0;
+  user-select: none;
+  cursor: grab;
+}
+.knob-wrapper:active {
+  cursor: grabbing;
+}
+
+.knob-dial {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #1e293b, #090e17 80%);
+  border: 3px solid #1e293b;
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.6),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.8);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.05s linear;
+}
+
+.knob-pointer {
+  position: absolute;
+  top: 9px;
+  width: 4px;
+  height: 14px;
+  background: #38bdf8;
+  border-radius: 2px;
+  box-shadow: 0 0 8px #38bdf8;
+}
+.knob-pointer.bipolar {
+  background: #00e5ff;
+  box-shadow: 0 0 10px #00e5ff;
+}
+
+.knob-center-cap {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #0f172a, #020617);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--text-2);
+}
+
+.knob-val-display {
+  font-family: var(--mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-top: 4px;
+}
+.knob-subtext {
+  font-size: 0.68rem;
+  color: var(--text-3);
+  font-family: var(--mono);
+}
+
+.knob-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  width: 100%;
+}
+.knob-controls-row .btn-sm {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+}
+
+/* ---------- 3-Thruster Control Specifics ---------- */
+.thrusters-panel-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 12px;
+}
+@media (max-width: 900px) {
+  .thrusters-panel-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+.thruster-status-pill {
+  font-size: 0.62rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.thruster-status-nominal { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+.thruster-status-warning { background: rgba(234, 179, 8, 0.15); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.3); }
+.thruster-status-overheated { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); animation: pulseDot 1s infinite; }
+
+.emergency-cutoff-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.btn-emergency-cutoff {
+  background: linear-gradient(180deg, #ef4444, #b91c1c);
+  color: #fff;
+  border: 1px solid #f87171;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.88rem;
+  letter-spacing: 0.06em;
+  padding: 10px 22px;
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.45);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-emergency-cutoff:hover {
+  background: linear-gradient(180deg, #f87171, #dc2626);
+  box-shadow: 0 6px 24px rgba(239, 68, 68, 0.65);
+  transform: translateY(-1px);
+}
+.btn-emergency-cutoff:active {
+  transform: translateY(1px);
+}
+
+/* ---------- Keypad Visualizer ---------- */
+.flight-keypad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  gap: 6px;
+  justify-content: center;
+  margin: 12px 0;
+}
+.key-cap {
+  width: 44px;
+  height: 44px;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--text);
+  box-shadow: 0 3px 0 #0f172a;
+  transition: all 0.1s ease;
+  cursor: pointer;
+  user-select: none;
+}
+.key-cap span {
+  font-size: 0.55rem;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.key-cap.active, .key-cap:active {
+  background: rgba(56, 189, 248, 0.25);
+  border-color: #38bdf8;
+  color: #38bdf8;
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #0f172a;
+}
+
+/* ---------- Solar & Propulsion Mode Pills ---------- */
+.propulsion-mode-bar {
+  display: flex;
+  gap: 8px;
+  background: rgba(10, 15, 26, 0.8);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  margin-top: 10px;
+}
+.prop-pill {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  color: var(--text-2);
+  text-align: center;
+  cursor: pointer;
+}
+.prop-pill.active {
+  background: rgba(56, 189, 248, 0.14);
+  border-color: rgba(56, 189, 248, 0.4);
+  color: #38bdf8;
+  font-weight: 600;
+}
+
+/* ---------- Physics Lab Equation Card ---------- */
+.physics-calc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+}
+.calc-card {
+  background: linear-gradient(180deg, rgba(16, 24, 40, 0.9), rgba(11, 18, 30, 0.95));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: border-color 0.2s ease;
+}
+.calc-card:hover {
+  border-color: rgba(56, 189, 248, 0.4);
+}
+.calc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.calc-formula-box {
+  background: rgba(2, 6, 23, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-family: var(--mono);
+  font-size: 0.84rem;
+  color: #38bdf8;
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.calc-substitution {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+.calc-result-box {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-soft);
+  padding-top: 8px;
+  margin-top: 6px;
+}
+.calc-result-val {
+  font-family: var(--mono);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #4ade80;
+}

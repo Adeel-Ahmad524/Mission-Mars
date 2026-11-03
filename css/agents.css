@@ -1,0 +1,145 @@
+/* ==========================================================================
+   MissionMind — Agents, decision history
+   ========================================================================== */
+
+/* ---------- Agent phase strip ---------- */
+.agent-phase-strip {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 12px 16px; margin-bottom: 12px;
+  background: rgba(148, 163, 184, 0.035);
+  border: 1px solid var(--border-soft); border-radius: 11px;
+  flex-wrap: wrap;
+}
+.phase-steps { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.phase-step {
+  font-family: var(--mono); font-size: 0.59rem; letter-spacing: 0.05em;
+  color: var(--text-3); padding: 3px 7px; border-radius: 4px;
+  border: 1px solid transparent; white-space: nowrap;
+}
+.phase-step.done { color: var(--text-2); background: rgba(56, 189, 248, 0.06); border-color: rgba(56, 189, 248, 0.14); }
+.phase-step.current { color: #7dd3fc; border-color: rgba(56, 189, 248, 0.4); background: rgba(56, 189, 248, 0.1); }
+.phase-step.complete { color: #86efac; border-color: rgba(34, 197, 94, 0.28); background: rgba(34, 197, 94, 0.07); }
+.phase-steps > i { width: 14px; height: 1px; background: rgba(148, 163, 184, 0.18); }
+.cycle-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: 0.68rem; }
+.cycle-meta .mono { color: var(--text-2); }
+.cycle-meta .dim { font-size: 0.6rem; }
+
+/* ---------- Agent cards ---------- */
+.agent-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+.agent-card {
+  display: flex; flex-direction: column;
+  padding: 16px;
+  border-radius: var(--radius);
+  background: linear-gradient(160deg, rgba(22, 34, 53, 0.95), rgba(15, 24, 39, 0.96));
+  border: 1px solid var(--border-soft);
+  position: relative; overflow: hidden;
+  transition: border-color 0.18s, transform 0.18s;
+}
+.agent-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--agent-accent, var(--blue)); opacity: 0.7; }
+.agent-card:hover { border-color: rgba(148, 163, 184, 0.25); transform: translateY(-1px); }
+.agent-card.agent-warning { border-color: rgba(245, 158, 11, 0.25); }
+.agent-card.agent-critical { border-color: rgba(239, 68, 68, 0.32); background: linear-gradient(160deg, rgba(42, 27, 35, 0.9), rgba(18, 20, 33, 0.96)); }
+.agent-card-head { display: flex; align-items: flex-start; gap: 10px; }
+.agent-avatar {
+  width: 38px; height: 38px; border-radius: 10px; flex: 0 0 auto;
+  display: grid; place-items: center;
+  font-family: var(--mono); font-size: 0.68rem; font-weight: 700;
+  border: 1px solid var(--agent-border, rgba(56, 189, 248, 0.3));
+  background: var(--agent-bg, rgba(56, 189, 248, 0.09));
+  color: var(--agent-accent, var(--blue));
+}
+.agent-identity { min-width: 0; flex: 1; }
+.agent-name { font-family: var(--display); font-size: 0.86rem; font-weight: 600; letter-spacing: -0.01em; }
+.agent-role { font-size: 0.63rem; color: var(--text-3); margin-top: 1px; }
+.agent-card-status { margin-top: 2px; }
+.agent-status-pill { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; border-radius: 4px; border: 1px solid; white-space: nowrap; }
+.agent-status-pill .dot { width: 4px; height: 4px; }
+.agent-status-monitoring { color: #7dd3fc; border-color: rgba(56, 189, 248, 0.24); background: rgba(56, 189, 248, 0.07); }
+.agent-status-analysing { color: #c4b5fd; border-color: rgba(139, 92, 246, 0.26); background: rgba(139, 92, 246, 0.08); }
+.agent-status-warning { color: #fcd34d; border-color: rgba(245, 158, 11, 0.28); background: rgba(245, 158, 11, 0.08); }
+.agent-status-critical { color: #fca5a5; border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.09); }
+.agent-status-idle { color: var(--text-3); border-color: var(--border-soft); background: rgba(148, 163, 184, 0.05); }
+.agent-status-completed { color: #86efac; border-color: rgba(34, 197, 94, 0.28); background: rgba(34, 197, 94, 0.07); }
+
+.agent-observation {
+  margin-top: 13px; padding: 9px 10px;
+  background: rgba(8, 13, 24, 0.38); border: 1px solid rgba(148, 163, 184, 0.07);
+  border-radius: 8px; font-size: 0.71rem; color: var(--text-2); line-height: 1.48;
+  min-height: 56px;
+}
+.agent-observation span { display: block; font-size: 0.55rem; letter-spacing: 0.1em; color: var(--text-3); text-transform: uppercase; margin-bottom: 4px; }
+.agent-recommendation { margin-top: 8px; padding-left: 9px; border-left: 2px solid var(--agent-accent, var(--blue)); font-size: 0.7rem; color: #dbeafe; line-height: 1.48; min-height: 46px; }
+.agent-recommendation span { display: block; font-size: 0.55rem; letter-spacing: 0.1em; color: var(--text-3); text-transform: uppercase; margin-bottom: 3px; }
+.agent-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(148, 163, 184, 0.08); }
+.confidence-block { min-width: 0; flex: 1; }
+.confidence-label { display: flex; justify-content: space-between; font-size: 0.57rem; color: var(--text-3); font-family: var(--mono); margin-bottom: 4px; }
+.confidence-track { height: 3px; background: rgba(148, 163, 184, 0.12); border-radius: 10px; overflow: hidden; }
+.confidence-track span { display: block; height: 100%; background: var(--agent-accent, var(--blue)); border-radius: 10px; transition: width 0.4s; }
+.agent-time { font-family: var(--mono); font-size: 0.58rem; color: var(--text-3); white-space: nowrap; }
+.agent-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 11px; }
+.agent-action-tag { font-family: var(--mono); font-size: 0.57rem; color: var(--text-3); background: rgba(148, 163, 184, 0.06); border-radius: 4px; padding: 2px 6px; }
+.agent-card-foot .link-btn { font-size: 0.65rem; }
+
+/* ---------- Message bus ---------- */
+.bus-card { margin-top: 0; }
+.message-stream { display: flex; flex-direction: column; max-height: 340px; overflow-y: auto; }
+.message-row {
+  display: grid; grid-template-columns: 82px 128px minmax(0, 1fr) auto;
+  gap: 10px; align-items: center;
+  padding: 8px 5px; border-bottom: 1px solid rgba(148, 163, 184, 0.065);
+  font-size: 0.69rem;
+}
+.message-row:last-child { border-bottom: 0; }
+.message-row .msg-time { font-family: var(--mono); font-size: 0.6rem; color: var(--text-3); }
+.message-row .msg-agent { font-size: 0.65rem; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.message-row .msg-text { color: var(--text-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.message-row .pill { font-size: 0.55rem; padding: 2px 6px; }
+.message-row.clickable { cursor: pointer; }
+.message-row.clickable:hover { background: rgba(148, 163, 184, 0.04); }
+
+/* ---------- Decision history ---------- */
+.decision-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+.filter-group { display: flex; gap: 5px; flex-wrap: wrap; }
+.filter-chip {
+  font-size: 0.7rem; font-weight: 500; color: var(--text-3);
+  padding: 6px 11px; border-radius: 6px;
+  background: rgba(148, 163, 184, 0.05); border: 1px solid var(--border-soft);
+  transition: 0.15s;
+}
+.filter-chip:hover { color: var(--text); background: rgba(148, 163, 184, 0.1); }
+.filter-chip.active { color: #7dd3fc; background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.28); }
+.decision-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 12px; align-items: start; }
+.decision-list-card { padding: 8px 16px; }
+.decision-list { display: flex; flex-direction: column; }
+.decision-entry {
+  display: grid; grid-template-columns: 94px 26px minmax(0, 1fr) auto;
+  gap: 10px; align-items: flex-start;
+  padding: 13px 4px; border-bottom: 1px solid rgba(148, 163, 184, 0.07);
+  cursor: pointer; transition: background 0.14s;
+}
+.decision-entry:last-child { border-bottom: 0; }
+.decision-entry:hover { background: rgba(148, 163, 184, 0.035); }
+.decision-entry .dec-time { font-family: var(--mono); font-size: 0.61rem; color: var(--text-3); padding-top: 2px; }
+.dec-marker { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; border: 1px solid var(--border-soft); background: rgba(148, 163, 184, 0.05); flex: 0 0 auto; }
+.dec-marker svg { width: 12px; height: 12px; }
+.dec-marker.decision { color: #c4b5fd; background: rgba(139, 92, 246, 0.09); border-color: rgba(139, 92, 246, 0.22); }
+.dec-marker.event { color: #fcd34d; background: rgba(245, 158, 11, 0.08); border-color: rgba(245, 158, 11, 0.22); }
+.dec-marker.observation { color: #7dd3fc; background: rgba(56, 189, 248, 0.08); border-color: rgba(56, 189, 248, 0.22); }
+.dec-marker.execution { color: #86efac; background: rgba(34, 197, 94, 0.08); border-color: rgba(34, 197, 94, 0.22); }
+.dec-marker.system { color: var(--text-3); }
+.dec-body { min-width: 0; }
+.dec-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.dec-title strong { font-size: 0.76rem; font-weight: 600; }
+.dec-msg { font-size: 0.69rem; color: var(--text-3); line-height: 1.5; margin-top: 2px; }
+.dec-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+.dec-tag { font-family: var(--mono); font-size: 0.55rem; color: var(--text-3); background: rgba(148, 163, 184, 0.06); border-radius: 3px; padding: 1px 5px; }
+.dec-chevron { color: var(--text-3); padding-top: 4px; }
+.dec-chevron svg { width: 13px; height: 13px; }
+.decision-aside { padding: 17px; }
+.pipeline { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.pipeline li { display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; }
+.pipeline li > span { font-family: var(--mono); font-size: 0.57rem; color: var(--blue); border: 1px solid rgba(56, 189, 248, 0.18); background: rgba(56, 189, 248, 0.05); border-radius: 4px; padding: 2px 5px; flex: 0 0 auto; margin-top: 1px; }
+.pipeline strong { display: block; font-size: 0.71rem; font-weight: 600; }
+.pipeline small { display: block; font-size: 0.62rem; color: var(--text-3); margin-top: 1px; }
+.aside-stat { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0; font-size: 0.68rem; color: var(--text-3); }
+.aside-stat strong { font-size: 0.72rem; color: var(--text-2); font-weight: 500; }

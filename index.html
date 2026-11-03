@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MissionMind 2.0 — Autonomous Spacecraft Simulator & Mission Control</title>
+  <meta name="description" content="MissionMind 2.0 is an advanced interactive spacecraft simulator and multi-agent autonomous mission-control web application.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="css/agents.css">
+  <link rel="stylesheet" href="css/controls.css">
+  <link rel="stylesheet" href="css/radar.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none">
+            <circle cx="20" cy="20" r="7" fill="#38BDF8" fill-opacity="0.18" stroke="#38BDF8" stroke-width="1.6"/>
+            <ellipse cx="20" cy="20" rx="16" ry="6.4" transform="rotate(-28 20 20)" stroke="#8B5CF6" stroke-width="1.4"/>
+            <circle cx="33" cy="12.5" r="2.1" fill="#38BDF8"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-name">MissionMind 2.0</div>
+          <div class="brand-sub">Autonomous Spacecraft</div>
+        </div>
+      </div>
+
+      <div class="sidebar-mission">
+        <div class="sidebar-mission-row">
+          <span class="dot dot-live"></span>
+          <span>MM-001 · ARES SIMULATOR</span>
+        </div>
+        <div class="sidebar-mission-meta">Astrophysical SI Physics Active</div>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <button class="nav-item active" data-view="overview">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.6"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.6"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.6"/></svg>
+          <span>Mission Control</span>
+        </button>
+        <button class="nav-item" data-view="spacecraft">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2.5 19 9l-3 12.5-4-3-4 3L5 9l7-6.5Z" stroke-linejoin="round"/><path d="M12 2.5v16"/></svg>
+          <span>Spacecraft Simulator</span>
+        </button>
+        <button class="nav-item" data-view="orbital">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.1"/><ellipse cx="12" cy="12" rx="9.2" ry="4" transform="rotate(-25 12 12)"/><circle cx="19.4" cy="7.6" r="1.5" fill="currentColor" stroke="none"/></svg>
+          <span>Orbital Mechanics</span>
+        </button>
+        <button class="nav-item" data-view="thrusters">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="4"/></svg>
+          <span>Thruster Control</span>
+        </button>
+        <button class="nav-item" data-view="solar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9l-2.1 2.1M7 17l-2.1 2.1"/></svg>
+          <span>Solar Energy</span>
+        </button>
+        <button class="nav-item" data-view="radar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 12 18.5 5.5"/></svg>
+          <span>Radar &amp; Navigation</span>
+        </button>
+        <button class="nav-item" data-view="sensors">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <span>Sensor Monitoring</span>
+        </button>
+        <button class="nav-item" data-view="agents">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="6.5" y="6.5" width="11" height="11" rx="2.4"/><path d="M9.5 9.8h5v4.4h-5z"/><path d="M12 3v3.5M12 17.5V21M3 12h3.5M17.5 12H21M5.2 5.2l2.4 2.4M16.4 16.4l2.4 2.4M18.8 5.2l-2.4 2.4M7.6 16.4l-2.4 2.4"/></svg>
+          <span>AI Agent Centre</span>
+          <span class="nav-badge" id="nav-agent-badge">9</span>
+        </button>
+        <button class="nav-item" data-view="physics">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10M6 10h10M6 14h6"/></svg>
+          <span>Physics Laboratory</span>
+        </button>
+        <button class="nav-item" data-view="decisions">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 6h13M8 12h13M8 18h13" stroke-linecap="round"/><circle cx="3.7" cy="6" r="1.2" fill="currentColor" stroke="none"/><circle cx="3.7" cy="12" r="1.2" fill="currentColor" stroke="none"/><circle cx="3.7" cy="18" r="1.2" fill="currentColor" stroke="none"/></svg>
+          <span>Mission History</span>
+        </button>
+        <button class="nav-item" data-view="emergencies">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3.6 21 19.2H3L12 3.6Z" stroke-linejoin="round"/><path d="M12 9.4v4.4"/><circle cx="12" cy="16.6" r="0.9" fill="currentColor" stroke="none"/></svg>
+          <span>Emergency Scenarios</span>
+          <span class="nav-badge nav-badge-alert" id="nav-emergency-badge" hidden>0</span>
+        </button>
+        <button class="nav-item" data-view="telemetry">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20V4M3 20h17"/><path d="M7 15.5v-4M11 15.5V8M15 15.5v-6M19 15.5V6.5" stroke-linecap="round"/></svg>
+          <span>Telemetry &amp; Analytics</span>
+        </button>
+        <button class="nav-item" data-view="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h9M4 12h5M4 17h8" stroke-linecap="round"/><circle cx="16.5" cy="7" r="2.4"/><circle cx="12.5" cy="12" r="2.4"/><circle cx="15" cy="17" r="2.4"/><path d="M18.9 7H21M14.9 12H21M17.4 17H21" stroke-linecap="round"/></svg>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sim-disclaimer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.2v.2" stroke-linecap="round"/></svg>
+          <p>MissionMind 2.0 Aerospace Simulator. All physics &amp; calculations evaluated in real-time.</p>
+        </div>
+        <div class="version-row"><span>v2.0.0</span><span class="version-dot"></span><span>SI Physics Active</span></div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-nav-btn" id="btn-mobile-nav" aria-label="Toggle navigation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round"/></svg>
+          </button>
+          <div class="topbar-mission">
+            <span class="topbar-label">MISSION</span>
+            <span class="topbar-value" id="top-mission">MM-001 · Ares Simulator</span>
+          </div>
+          <span class="status-chip status-standby" id="status-chip">STANDBY</span>
+          <div class="mode-selector-bar" style="margin-left: 10px;">
+            <button class="mode-btn active" data-mode="manual" title="Direct user control">MANUAL</button>
+            <button class="mode-btn" data-mode="autonomous" title="Autonomous 9-agent control">AUTONOMOUS</button>
+            <button class="mode-btn" data-mode="hybrid" title="Configurable human/agent authority">HYBRID</button>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="link-status" id="link-status">
+            <span class="dot dot-live"></span>
+            <span id="link-status-text">SI PHYSICS LINK ONLINE</span>
+          </div>
+          <div class="clock-block">
+            <span class="topbar-label">MISSION CLOCK</span>
+            <span class="clock-value" id="mission-clock">D+000 00:00</span>
+          </div>
+          <button class="icon-btn" id="btn-top-settings" aria-label="Open settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3.1"/><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.36a1.7 1.7 0 0 0-1 1.55V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.87.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.64 15a1.7 1.7 0 0 0-1.55-1H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.87l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.64a1.7 1.7 0 0 0 1-1.55V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.87-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.36 9a1.7 1.7 0 0 0 1.55 1H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.51 1Z"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <main class="content">
+        <!-- ================= MISSION OVERVIEW ================= -->
+        <section class="view active" data-view="overview">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Mission Control · Autonomous Operations</p>
+              <h1>Ares Transit <span class="mono muted">/ MM-001</span></h1>
+              <p class="page-sub">Simulated Earth → Mars transit with six collaborating agents. All values are synthetic.</p>
+            </div>
+            <div class="mission-controls">
+              <button class="btn btn-primary" id="btn-start">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.4v13.2a.8.8 0 0 0 1.2.7l10.4-6.6a.8.8 0 0 0 0-1.4L9.2 4.7A.8.8 0 0 0 8 5.4Z"/></svg>
+                Start Mission
+              </button>
+              <button class="btn btn-ghost" id="btn-pause" disabled>
+                <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>
+                <span id="btn-pause-label">Pause</span>
+              </button>
+              <button class="btn btn-ghost" id="btn-reset">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1" stroke-linecap="round"/><path d="M3.5 4v5h5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Reset
+              </button>
+              <label class="speed-control">
+                <span>SIM RATE</span>
+                <select id="speed-select">
+                  <option value="1">1×</option>
+                  <option value="2" selected>2×</option>
+                  <option value="4">4×</option>
+                  <option value="8">8×</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div class="overview-grid">
+            <section class="card hero-card">
+              <div class="hero-progress">
+                <div class="progress-ring" id="hero-ring" style="--p:0">
+                  <div class="progress-ring-inner">
+                    <span class="ring-value" id="ov-progress">0.0%</span>
+                    <span class="ring-label">TRANSIT</span>
+                  </div>
+                </div>
+              </div>
+              <div class="hero-body">
+                <div class="hero-topline">
+                  <span class="badge badge-muted" id="ov-status-badge">STANDBY</span>
+                  <span class="hero-mode" id="ov-mode-label">Nominal operations</span>
+                </div>
+                <h2 id="ov-phase">Pre-launch · systems configuring</h2>
+                <p id="ov-phase-sub">Start the mission to begin autonomous monitoring and resource simulation.</p>
+                <div class="hero-metrics">
+                  <div>
+                    <span class="metric-label">MISSION DAY</span>
+                    <span class="metric-value mono" id="ov-day">0.0 <em>/ 210</em></span>
+                  </div>
+                  <div>
+                    <span class="metric-label">ETA TO MARS</span>
+                    <span class="metric-value mono" id="ov-eta">210.0 d</span>
+                  </div>
+                  <div>
+                    <span class="metric-label">CRUISE VELOCITY</span>
+                    <span class="metric-value mono" id="ov-velocity">24.80 <em>km/s</em></span>
+                  </div>
+                  <div>
+                    <span class="metric-label">DECISIONS LOGGED</span>
+                    <span class="metric-value mono" id="ov-decisions">0</span>
+                  </div>
+                </div>
+                <div class="progress-track hero-track"><span id="ov-progress-bar" style="width:0%"></span></div>
+              </div>
+            </section>
+
+            <section class="card alerts-card">
+              <div class="card-head">
+                <div>
+                  <span class="card-kicker">Live status</span>
+                  <h3>Mission Alerts</h3>
+                </div>
+                <span class="pill" id="alert-count">0 active</span>
+              </div>
+              <div class="alert-list" id="alerts-list">
+                <div class="empty-state">All monitored systems nominal.</div>
+              </div>
+            </section>
+
+            <div class="kpi-grid">
+              <article class="card kpi-card">
+                <div class="kpi-head"><span>FUEL</span><span class="kpi-icon kpi-blue">F</span></div>
+                <div class="kpi-value mono" id="kpi-fuel">82.0<em>%</em></div>
+                <div class="progress-track"><span id="kpi-fuel-bar" style="width:82%"></span></div>
+                <div class="kpi-foot"><span id="kpi-fuel-note">Nominal reserves</span><span class="mono" id="kpi-fuel-consumed">0.0% used</span></div>
+              </article>
+              <article class="card kpi-card">
+                <div class="kpi-head"><span>ELECTRICAL POWER</span><span class="kpi-icon kpi-purple">P</span></div>
+                <div class="kpi-value mono" id="kpi-power">78.0<em>%</em></div>
+                <div class="progress-track"><span id="kpi-power-bar" style="width:78%"></span></div>
+                <div class="kpi-foot"><span id="kpi-power-note">Bus voltage stable</span><span class="mono" id="kpi-power-consumed">0.0% used</span></div>
+              </article>
+              <article class="card kpi-card">
+                <div class="kpi-head"><span>OXYGEN</span><span class="kpi-icon kpi-green">O₂</span></div>
+                <div class="kpi-value mono" id="kpi-oxygen">95.0<em>%</em></div>
+                <div class="progress-track"><span id="kpi-oxygen-bar" style="width:95%"></span></div>
+                <div class="kpi-foot"><span id="kpi-oxygen-note">Cabin pressure stable</span><span class="mono" id="kpi-oxygen-consumed">0.0% used</span></div>
+              </article>
+              <article class="card kpi-card">
+                <div class="kpi-head"><span>RANGE TO MARS</span><span class="kpi-icon kpi-blue">D</span></div>
+                <div class="kpi-value mono" id="kpi-distance">225.0<em>M km</em></div>
+                <div class="progress-track progress-purple"><span id="kpi-distance-bar" style="width:0%"></span></div>
+                <div class="kpi-foot"><span>Linear visual model</span><span class="mono" id="kpi-distance-pct">0% closed</span></div>
+              </article>
+              <article class="card kpi-card">
+                <div class="kpi-head"><span>EQUIPMENT HEALTH</span><span class="kpi-icon kpi-amber">H</span></div>
+                <div class="kpi-value mono" id="kpi-health">100.0<em>%</em></div>
+                <div class="progress-track"><span id="kpi-health-bar" class="bar-green" style="width:100%"></span></div>
+                <div class="kpi-foot"><span id="kpi-health-note">All assemblies nominal</span><span class="mono" id="kpi-temp">22.0 °C</span></div>
+              </article>
+              <article class="card kpi-card">
+                <div class="kpi-head"><span>COMMUNICATION</span><span class="kpi-icon kpi-cyan">C</span></div>
+                <div class="kpi-value kpi-text" id="kpi-comm">STABLE</div>
+                <div class="signal-bars" id="kpi-comm-bars"><span></span><span></span><span></span><span></span></div>
+                <div class="kpi-foot"><span id="kpi-comm-note">DSN link simulated</span><span class="mono" id="kpi-autonomy">Ground linked</span></div>
+              </article>
+            </div>
+
+            <section class="card map-preview-card">
+              <div class="card-head">
+                <div>
+                  <span class="card-kicker">Trajectory</span>
+                  <h3>Spacecraft Position</h3>
+                </div>
+                <button class="link-btn" data-nav="visualization">Open visualization →</button>
+              </div>
+              <div class="map-frame compact">
+                <canvas id="overview-map" aria-label="Compact spacecraft trajectory visualization"></canvas>
+              </div>
+              <div class="map-foot">
+                <span><i class="legend-dot legend-earth"></i>Earth</span>
+                <span><i class="legend-dot legend-ship"></i>Spacecraft</span>
+                <span><i class="legend-dot legend-mars"></i>Mars</span>
+                <span class="mono" id="map-foot-progress">0.0% complete</span>
+              </div>
+            </section>
+
+            <section class="card agent-snapshot-card">
+              <div class="card-head">
+                <div>
+                  <span class="card-kicker">Multi-agent system</span>
+                  <h3>Agent Snapshot</h3>
+                </div>
+                <button class="link-btn" data-nav="agents">Agent centre →</button>
+              </div>
+              <div class="agent-snapshot-list" id="ov-agent-list"></div>
+            </section>
+
+            <section class="card emergency-quick-card">
+              <div class="card-head">
+                <div>
+                  <span class="card-kicker">Inject condition</span>
+                  <h3>Emergency Scenarios</h3>
+                </div>
+                <button class="link-btn" data-nav="emergencies">Details →</button>
+              </div>
+              <p class="card-note">Each scenario modifies mission state, activates relevant agents and forces a Commander evaluation.</p>
+              <div class="quick-scenarios">
+                <button class="quick-scenario" data-scenario="solar-storm">
+                  <span class="qs-icon qs-storm">☀</span>
+                  <span><strong>Solar Storm</strong><small>Radiation · thermal</small></span>
+                  <span class="qs-state" data-scenario-state="solar-storm">ARM</span>
+                </button>
+                <button class="quick-scenario" data-scenario="fuel-shortage">
+                  <span class="qs-icon qs-fuel">⛽</span>
+                  <span><strong>Fuel Shortage</strong><small>Propellant · leak</small></span>
+                  <span class="qs-state" data-scenario-state="fuel-shortage">ARM</span>
+                </button>
+                <button class="quick-scenario" data-scenario="communication-failure">
+                  <span class="qs-icon qs-comm">⌁</span>
+                  <span><strong>Comms Failure</strong><small>Onboard autonomy</small></span>
+                  <span class="qs-state" data-scenario-state="communication-failure">ARM</span>
+                </button>
+                <button class="quick-scenario" data-scenario="power-failure">
+                  <span class="qs-icon qs-power">⚡</span>
+                  <span><strong>Power Failure</strong><small>Bus · essential loads</small></span>
+                  <span class="qs-state" data-scenario-state="power-failure">ARM</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="card activity-card">
+              <div class="card-head">
+                <div>
+                  <span class="card-kicker">Chronological stream</span>
+                  <h3>Recent Activity</h3>
+                </div>
+                <button class="link-btn" data-nav="decisions">Full history →</button>
+              </div>
+              <div class="mini-log" id="ov-activity"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- ================= SPACECRAFT SIMULATOR ================= -->
+        <section class="view" data-view="spacecraft">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Spacecraft Simulator · 3D Interactive Telemetry</p>
+              <h1>Spacecraft Visualizer</h1>
+              <p class="page-sub">Interactive 3D model with real-time propulsion exhaust, deployable solar wings, attitude rotation, and subsystem telemetry.</p>
+            </div>
+            <div class="mission-controls">
+              <span class="pill pill-blue">3D Interactive Projection</span>
+              <span class="pill pill-green">Orbit Drag / Wheel Zoom</span>
+            </div>
+          </div>
+
+          <div class="viz-grid">
+            <section class="card viz-main-card" style="padding:0; overflow:hidden; position:relative;">
+              <div id="spacecraft-canvas-container" style="width:100%; height:520px; background:#050914;"></div>
+            </section>
+
+            <aside class="viz-side">
+              <section class="card">
+                <div class="card-head tight">
+                  <div>
+                    <span class="card-kicker">Component Subsystems</span>
+                    <h3>Spacecraft Anatomy</h3>
+                  </div>
+                </div>
+                <dl class="data-list">
+                  <div>
+                    <dt>Main Hull &amp; Avionics</dt>
+                    <dd class="mono">Hexagonal Pressurized</dd>
+                  </div>
+                  <div>
+                    <dt>3-Axis Propulsion</dt>
+                    <dd class="mono" id="sim-prop-type">Bi-Propellant / Ion</dd>
+                  </div>
+                  <div>
+                    <dt>Solar Array Wings</dt>
+                    <dd class="mono" id="sim-solar-wings">Dual Photovoltaic</dd>
+                  </div>
+                  <div>
+                    <dt>Attitude Stabilization</dt>
+                    <dd class="mono">Tri-Axial R-L Gyro</dd>
+                  </div>
+                  <div>
+                    <dt>Radar Transceiver</dt>
+                    <dd class="mono">Pulse Doppler 360°</dd>
+                  </div>
+                  <div>
+                    <dt>High-Gain Antenna</dt>
+                    <dd class="mono">Gimbaled Parabolic</dd>
+                  </div>
+                </dl>
+                <p class="card-note">Every thruster command, orientation adjustment, and panel deployment animates on the 3D spacecraft visualizer.</p>
+              </section>
+
+              <section class="card">
+                <div class="card-head tight">
+                  <div>
+                    <span class="card-kicker">Attitude Telemetry</span>
+                    <h3>Current Orientation</h3>
+                  </div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; text-align:center; margin-top:8px;">
+                  <div style="background:rgba(16,24,40,0.6); padding:8px; border-radius:8px; border:1px solid var(--border-soft);">
+                    <div style="font-size:0.6rem; color:var(--text-3); font-family:var(--mono);">PITCH</div>
+                    <div class="mono" id="val-orient-pitch" style="font-size:1.05rem; font-weight:700; color:#38bdf8;">0.0°</div>
+                  </div>
+                  <div style="background:rgba(16,24,40,0.6); padding:8px; border-radius:8px; border:1px solid var(--border-soft);">
+                    <div style="font-size:0.6rem; color:var(--text-3); font-family:var(--mono);">YAW</div>
+                    <div class="mono" id="val-orient-yaw" style="font-size:1.05rem; font-weight:700; color:#38bdf8;">0.0°</div>
+                  </div>
+                  <div style="background:rgba(16,24,40,0.6); padding:8px; border-radius:8px; border:1px solid var(--border-soft);">
+                    <div style="font-size:0.6rem; color:var(--text-3); font-family:var(--mono);">ROLL</div>
+                    <div class="mono" id="val-orient-roll" style="font-size:1.05rem; font-weight:700; color:#38bdf8;">0.0°</div>
+                  </div>
+                </div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ================= ORBITAL MECHANICS CONTROL CENTRE ================= -->
+        <section class="view" data-view="orbital">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Astrodynamics · Keplerian Physics</p>
+              <h1>Orbital Mechanics Control Centre</h1>
+              <p class="page-sub">Central gravitational body simulation, circular velocity (v_c), escape velocity (v_esc), and real-time trajectory visualization.</p>
+            </div>
+            <div class="mission-controls">
+              <select id="orbit-body-select" class="select-input" title="Select Central Body">
+                <option value="earth" selected>Earth (M = 5.97×10²⁴ kg)</option>
+                <option value="moon">Moon (M = 7.34×10²² kg)</option>
+                <option value="mars">Mars (M = 6.42×10²³ kg)</option>
+                <option value="sun">Sun (M = 1.99×10³⁰ kg)</option>
+              </select>
+              <button class="btn btn-warning" id="btn-trigger-escape">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                Escape Orbit Burn
+              </button>
+              <button class="btn btn-ghost" id="btn-circularize-orbit">Circularize Orbit</button>
+            </div>
+          </div>
+
+          <div class="viz-grid">
+            <section class="card viz-main-card">
+              <div class="card-head tight">
+                <div>
+                  <span class="card-kicker">Trajectory Plane (2D / 3D Projection)</span>
+                  <h3>Orbital Trajectory Plot</h3>
+                </div>
+                <span class="badge badge-green" id="telemetry-orbit-state">Circular Orbit (Bound)</span>
+              </div>
+              <div style="position:relative; width:100%; min-height:360px; background:radial-gradient(circle at center, #0a1124 0%, #030712 90%); border-radius:10px; overflow:hidden;">
+                <canvas id="trajectory-canvas" style="width:100%; height:360px; display:block;"></canvas>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin-top:12px;">
+                <div class="telemetry-box" style="background:rgba(16,24,40,0.6); padding:8px 10px; border-radius:8px; border:1px solid var(--border-soft);">
+                  <span class="card-kicker">Altitude</span>
+                  <div class="mono" id="telemetry-orbit-alt" style="font-size:1.05rem; font-weight:700; color:#38bdf8;">400 km</div>
+                </div>
+                <div class="telemetry-box" style="background:rgba(16,24,40,0.6); padding:8px 10px; border-radius:8px; border:1px solid var(--border-soft);">
+                  <span class="card-kicker">Orbital Velocity</span>
+                  <div class="mono" id="telemetry-orbit-vel-kms" style="font-size:1.05rem; font-weight:700; color:#38bdf8;">7.67 km/s</div>
+                </div>
+                <div class="telemetry-box" style="background:rgba(16,24,40,0.6); padding:8px 10px; border-radius:8px; border:1px solid var(--border-soft);">
+                  <span class="card-kicker">Circular v_c</span>
+                  <div class="mono" id="telemetry-circ-vel-kms" style="font-size:1.05rem; font-weight:700; color:#4ade80;">7.67 km/s</div>
+                </div>
+                <div class="telemetry-box" style="background:rgba(16,24,40,0.6); padding:8px 10px; border-radius:8px; border:1px solid var(--border-soft);">
+                  <span class="card-kicker">Escape v_esc</span>
+                  <div class="mono" id="telemetry-esc-vel-kms" style="font-size:1.05rem; font-weight:700; color:#f59e0b;">10.85 km/s</div>
+                </div>
+                <div class="telemetry-box" style="background:rgba(16,24,40,0.6); padding:8px 10px; border-radius:8px; border:1px solid var(--border-soft);">
+                  <span class="card-kicker">Δv to Circular</span>
+                  <div class="mono" id="telemetry-delta-v" style="font-size:1.05rem; font-weight:700; color:#cbd5e1;">0 m/s</div>
+                </div>
+              </div>
+            </section>
+
+            <aside class="viz-side">
+              <section class="card">
+                <div class="card-head tight">
+                  <div>
+                    <span class="card-kicker">Interactive Control Knobs</span>
+                    <h3>Orbital Parameters</h3>
+                  </div>
+                </div>
+
+                <div style="margin-bottom:14px;">
+                  <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+                    <span>Orbital Speed (m/s)</span>
+                    <span class="mono" id="telemetry-orbit-vel-ms" style="color:#38bdf8; font-weight:700;">7,670</span>
+                  </div>
+                  <input type="range" id="orbit-velocity-input" min="100" max="25000" step="50" value="7670" style="width:100%; accent-color:#38bdf8;">
+                </div>
+
+                <div style="margin-bottom:14px;">
+                  <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+                    <span>Orbital Radius (m)</span>
+                    <span class="mono" style="color:#38bdf8; font-weight:700;">r</span>
+                  </div>
+                  <input type="range" id="orbit-radius-input" min="6500000" max="45000000" step="100000" value="6771000" style="width:100%; accent-color:#38bdf8;">
+                </div>
+
+                <div style="margin-bottom:14px;">
+                  <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+                    <span>Inclination (°)</span>
+                    <span class="mono" style="color:#38bdf8; font-weight:700;">i</span>
+                  </div>
+                  <input type="range" id="orbit-inclination-input" min="0" max="180" step="1" value="28" style="width:100%; accent-color:#38bdf8;">
+                </div>
+
+                <div style="margin-bottom:14px;">
+                  <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:4px;">
+                    <span>Eccentricity (e)</span>
+                    <span class="mono" style="color:#38bdf8; font-weight:700;">e</span>
+                  </div>
+                  <input type="range" id="orbit-eccentricity-input" min="0" max="1.4" step="0.01" value="0.001" style="width:100%; accent-color:#38bdf8;">
+                </div>
+
+                <dl class="data-list" style="margin-top:14px;">
+                  <div><dt>Specific Energy ε</dt><dd class="mono" id="telemetry-specific-energy">-29.42 MJ/kg</dd></div>
+                  <div><dt>Orbital Period T</dt><dd class="mono" id="telemetry-orbit-period">92.5 min</dd></div>
+                  <div><dt>Periapsis (r_p)</dt><dd class="mono" id="telemetry-orbit-peri">400 km</dd></div>
+                  <div><dt>Apoapsis (r_a)</dt><dd class="mono" id="telemetry-orbit-apo">400 km</dd></div>
+                </dl>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ================= THREE-THRUSTER CONTROL SYSTEM ================= -->
+        <section class="view" data-view="thrusters">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Propulsion Avionics · F = ma</p>
+              <h1>Three-Axis Thruster Control</h1>
+              <p class="page-sub">Independent bipolar translation along spacecraft local axes (X: Fore/Aft, Y: Port/Starboard, Z: Dorsal/Ventral) and Euler orientation.</p>
+            </div>
+            <div class="mission-controls">
+              <span class="pill pill-blue">Active Mode: <strong id="telemetry-prop-mode-label">CHEMICAL</strong></span>
+              <span class="pill pill-green">Total Thrust: <strong id="telemetry-total-thrust">0 N</strong></span>
+              <span class="pill pill-amber">Mass Flow: <strong id="telemetry-mass-flow">0.000 kg/s</strong></span>
+            </div>
+          </div>
+
+          <div class="thrusters-panel-container">
+            <!-- Thruster X -->
+            <div class="knob-card">
+              <span class="card-kicker">THRUSTER 1</span>
+              <h4>X-Axis (Fore / Aft)</h4>
+              <div class="knob-wrapper" id="knob-thruster-x">
+                <div class="knob-dial" id="knob-dial-x">
+                  <div class="knob-pointer bipolar"></div>
+                  <div class="knob-center-cap">X</div>
+                </div>
+              </div>
+              <div class="knob-val-display" id="val-thruster-x">0%</div>
+              <input type="range" id="input-thruster-x" min="-100" max="100" step="5" value="0" style="width:100%; margin:8px 0; accent-color:#00e5ff;">
+              <div class="knob-controls-row">
+                <button class="btn btn-sm btn-ghost" id="btn-thruster-x-rev">-100%</button>
+                <button class="btn btn-sm btn-ghost" id="btn-thruster-x-zero">0%</button>
+                <button class="btn btn-sm btn-ghost" id="btn-thruster-x-full">+100%</button>
+              </div>
+              <dl class="data-list" style="width:100%; margin-top:10px;">
+                <div><dt>Applied Thrust</dt><dd class="mono" id="thrust-n-x">0 N</dd></div>
+                <div><dt>Core Temp</dt><dd class="mono" id="temp-thruster-x">22°C</dd></div>
+              </dl>
+              <div id="status-thruster-x" class="thruster-status-pill thruster-status-nominal">NOMINAL</div>
+            </div>
+
+            <!-- Thruster Y -->
+            <div class="knob-card">
+              <span class="card-kicker">THRUSTER 2</span>
+              <h4>Y-Axis (Port / Starboard)</h4>
+              <div class="knob-wrapper" id="knob-thruster-y">
+                <div class="knob-dial" id="knob-dial-y">
+                  <div class="knob-pointer bipolar"></div>
+                  <div class="knob-center-cap">Y</div>
+                </div>
+              </div>
+              <div class="knob-val-display" id="val-thruster-y">0%</div>
+              <input type="range" id="input-thruster-y" min="-100" max="100" step="5" value="0" style="width:100%; margin:8px 0; accent-color:#00e5ff;">
+              <div class="knob-controls-row">
+                <button class="btn btn-sm btn-ghost" id="btn-thruster-y-rev">-100%</button>
+                <button class="btn btn-sm btn-ghost" id="btn-thruster-y-zero">0%</button>
+                <button class="btn btn-sm btn-ghost" id="btn-thruster-y-full">+100%</button>
+              </div>
+              <dl class="data-list" style="width:100%; margin-top:10px;">
+                <div><dt>Applied Thrust</dt><dd class="mono" id="thrust-n-y">0 N</dd></div>
+                <div><dt>Core Temp</dt><dd class="mono" id="temp-thruster-y">22°C</dd></div>
+              </dl>
+              <div id="status-thruster-y" class="thruster-status-pill thruster-status-nominal">NOMINAL</div>
+            </div>
+
+            <!-- Thruster Z -->
+            <div class="knob-card">
+              <span class="card-kicker">THRUSTER 3</span>
+              <h4>Z-Axis (Dorsal / Ventral)</h4>
+              <div class="knob-wrapper" id="knob-thruster-z">
+                <div class="knob-dial" id="knob-dial-z">
+                  <div class="knob-pointer bipolar"></div>
+                  <div class="knob-center-cap">Z</div>
+                </div>
+              </div>
+              <div class="knob-val-display" id="val-thruster-z">0%</div>
+              <input type="range" id="input-thruster-z" min="-100" max="100" step="5" value="0" style="width:100%; margin:8px 0; accent-color:#00e5ff;">
+              <div class="knob-controls-row">
+                <button class="btn btn-sm btn-ghost" id="btn-thruster-z-rev">-100%</button>
+                <button class="btn btn-sm btn-ghost" id="btn-thruster-z-zero">0%</button>
+                <button class="btn btn-sm btn-ghost" id="btn-thruster-z-full">+100%</button>
+              </div>
+              <dl class="data-list" style="width:100%; margin-top:10px;">
+                <div><dt>Applied Thrust</dt><dd class="mono" id="thrust-n-z">0 N</dd></div>
+                <div><dt>Core Temp</dt><dd class="mono" id="temp-thruster-z">22°C</dd></div>
+              </dl>
+              <div id="status-thruster-z" class="thruster-status-pill thruster-status-nominal">NOMINAL</div>
+            </div>
+          </div>
+
+          <!-- Emergency Cutoff Bar -->
+          <div class="emergency-cutoff-bar">
+            <div>
+              <h4 style="color:#f87171; margin-bottom:2px;">PROPULSION HARD SAFETY INTERLOCK</h4>
+              <p style="font-size:0.74rem; color:var(--text-3);">Space key shortcut instantly zeroes all thruster commands and isolates propellant feedlines.</p>
+            </div>
+            <button class="btn-emergency-cutoff" id="btn-emergency-cutoff">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
+              EMERGENCY THRUSTER CUTOFF
+            </button>
+          </div>
+
+          <!-- Manual Flight Keypad & Attitude Panel -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+            <section class="card">
+              <div class="card-head tight">
+                <div>
+                  <span class="card-kicker">Keyboard Translation HUD</span>
+                  <h3>Directional Thrust Keypad</h3>
+                </div>
+                <span class="badge badge-muted">W / S / A / D / R / F</span>
+              </div>
+              <div class="flight-keypad-grid">
+                <div class="key-cap" id="key-q">Q<span>ROT L</span></div>
+                <div class="key-cap" id="key-w">W<span>+X FORE</span></div>
+                <div class="key-cap" id="key-e">E<span>ROT R</span></div>
+                <div class="key-cap" id="key-a">A<span>+Y PORT</span></div>
+                <div class="key-cap" id="key-s">S<span>-X AFT</span></div>
+                <div class="key-cap" id="key-d">D<span>-Y STBD</span></div>
+                <div class="key-cap" id="key-r">R<span>+Z UP</span></div>
+                <div class="key-cap" id="key-space" style="grid-column:span 1;">SP<span>STOP</span></div>
+                <div class="key-cap" id="key-f">F<span>-Z DN</span></div>
+              </div>
+              <p class="card-note" style="text-align:center;">Hold translation keys for thrust burn. Release resets command to 0%.</p>
+            </section>
+
+            <section class="card">
+              <div class="card-head tight">
+                <div>
+                  <span class="card-kicker">Attitude Gimbals</span>
+                  <h3>Orientation Knobs</h3>
+                </div>
+              </div>
+              <div style="margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
+                  <span>Pitch (θ)</span><span class="mono" id="label-orient-pitch">0°</span>
+                </div>
+                <input type="range" id="input-orient-pitch" min="-180" max="180" step="2" value="0" style="width:100%; accent-color:#38bdf8;">
+              </div>
+              <div style="margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
+                  <span>Yaw (ψ)</span><span class="mono" id="label-orient-yaw">0°</span>
+                </div>
+                <input type="range" id="input-orient-yaw" min="-180" max="180" step="2" value="0" style="width:100%; accent-color:#38bdf8;">
+              </div>
+              <div style="margin-bottom:10px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem;">
+                  <span>Roll (φ)</span><span class="mono" id="label-orient-roll">0°</span>
+                </div>
+                <input type="range" id="input-orient-roll" min="-180" max="180" step="2" value="0" style="width:100%; accent-color:#38bdf8;">
+              </div>
+              <p class="card-note">Orientation angles transform spacecraft-local thruster axes into inertial world frame acceleration.</p>
+            </section>
+          </div>
+        </section>
+
+        <!-- ================= SOLAR ENERGY MANAGEMENT ================= -->
+        <section class="view" data-view="solar">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Power Avionics · Photovoltaic Generation</p>
+              <h1>Solar Energy &amp; Battery Management</h1>
+              <p class="page-sub">Deployable photovoltaic wings (P = η · A · S · cos θ), 60 kWh flight battery pack, and chemical vs solar-electric propulsion transition.</p>
+            </div>
+            <div class="mission-controls">
+              <button class="btn btn-primary" id="btn-toggle-solar-panels">Deploy Solar Panels</button>
+              <button class="btn btn-ghost" id="btn-align-sun">Auto-Align Sun Vector</button>
+            </div>
+          </div>
+
+          <div class="viz-grid">
+            <section class="card viz-main-card">
+              <div class="card-head tight">
+                <div>
+                  <span class="card-kicker">Photovoltaic Performance</span>
+                  <h3>Solar Generation Model</h3>
+                </div>
+                <span class="badge badge-blue" id="solar-deploy-status">DEPLOYED (100%)</span>
+              </div>
+
+              <div class="calc-formula-box" style="margin:10px 0;">
+                <code>P = η · A · S · cos(θ)</code>
+                <span style="font-size:0.72rem; color:var(--text-3);">Clamped ≥ 0 Watts</span>
+              </div>
+
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px; margin:14px 0;">
+                <div class="telemetry-box" style="background:rgba(16,24,40,0.6); padding:8px 10px; border-radius:8px; border:1px solid var(--border-soft);">
+                  <span class="card-kicker">Generated Power</span>
+                  <div class="mono" id="telemetry-solar-generated-w" style="font-size:1.15rem; font-weight:700; color:#4ade80;">4,200 W</div>
+                </div>
+                <div class="telemetry-box" style="background:rgba(16,24,40,0.6); padding:8px 10px; border-radius:8px; border:1px solid var(--border-soft);">
+                  <span class="card-kicker">Solar Irradiance S</span>
+                  <div class="mono" id="telemetry-solar-irradiance" style="font-size:1.15rem; font-weight:700; color:#38bdf8;">1,361 W/m²</div>
+                </div>
+                <div class="telemetry-box" style="background:rgba(16,24,40,0.6); padding:8px 10px; border-radius:8px; border:1px solid var(--border-soft);">
+                  <span class="card-kicker">Incident Angle θ</span>
+                  <div class="mono" id="telemetry-solar-angle" style="font-size:1.15rem; font-weight:700; color:#cbd5e1;">15°</div>
+                </div>
+                <div class="telemetry-box" style="background:rgba(16,24,40,0.6); padding:8px 10px; border-radius:8px; border:1px solid var(--border-soft);">
+                  <span class="card-kicker">Cosine Loss</span>
+                  <div class="mono" id="telemetry-solar-cos-loss" style="font-size:1.15rem; font-weight:700; color:#f59e0b;">3%</div>
+                </div>
+              </div>
+
+              <div style="margin-top:16px;">
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; margin-bottom:6px;">
+                  <span>Solar Tracking Gimbal Angle θ (0° = Sun Normal, 90° = Edge-on)</span>
+                  <span class="mono" style="color:#38bdf8; font-weight:700;">GIMBAL</span>
+                </div>
+                <input type="range" id="input-solar-angle" min="0" max="180" step="1" value="15" style="width:100%; accent-color:#38bdf8;">
+              </div>
+
+              <div class="card-divider"></div>
+
+              <!-- Battery HUD -->
+              <div class="card-head tight">
+                <div>
+                  <span class="card-kicker">Energy Storage Subsystem</span>
+                  <h3>60 kWh Flight Battery Pack</h3>
+                </div>
+                <span class="mono" id="telemetry-battery-wh" style="color:var(--text-2); font-size:0.75rem;">51,000 / 60,000 Wh</span>
+              </div>
+              <div class="progress-track" style="height:10px; margin:8px 0;">
+                <span id="battery-charge-bar" class="bar-green" style="width:85%;"></span>
+              </div>
+              <div style="display:flex; justify-content:space-between; font-size:0.72rem; font-family:var(--mono);">
+                <span>Charge State: <strong id="telemetry-battery-pct" style="color:#4ade80;">85.0%</strong></span>
+                <span>Net Electrical Flux: <strong id="telemetry-battery-net-w" style="color:#4ade80;">+2,300 W</strong></span>
+              </div>
+            </section>
+
+            <aside class="viz-side">
+              <section class="card">
+                <div class="card-head tight">
+                  <div>
+                    <span class="card-kicker">Propulsion Energy Mode</span>
+                    <h3>Energy Transition</h3>
+                  </div>
+                </div>
+                <p style="font-size:0.72rem; color:var(--text-3); line-height:1.5;">
+                  Chemical engines use bi-propellant reaction mass. Solar-electric Hall thrusters consume electric power at 3100s Isp.
+                </p>
+                <div class="propulsion-mode-bar">
+                  <button class="prop-pill active" data-prop-mode="chemical">CHEMICAL</button>
+                  <button class="prop-pill" data-prop-mode="solar-electric">SOLAR-ELEC</button>
+                  <button class="prop-pill" data-prop-mode="hybrid">HYBRID</button>
+                </div>
+                <dl class="data-list" style="margin-top:14px;">
+                  <div><dt>Base Avionics Load</dt><dd class="mono">1,100 W</dd></div>
+                  <div><dt>Life Support Load</dt><dd class="mono">800 W</dd></div>
+                  <div><dt>Active Science Load</dt><dd class="mono">650 W</dd></div>
+                  <div><dt>Electric Thruster Load</dt><dd class="mono">Up to 4,500 W</dd></div>
+                </dl>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ================= RADAR & NAVIGATION ================= -->
+        <section class="view" data-view="radar">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Surveillance · Obstacle Proximity</p>
+              <h1>Radar &amp; Obstacle Detection</h1>
+              <p class="page-sub">360° circular sweep radar screen. Tracks relative distance, relative velocity, time to closest approach (TCA), and miss distance.</p>
+            </div>
+            <div class="mission-controls">
+              <div class="radar-range-buttons">
+                <button class="radar-range-btn" data-range="25">25 km</button>
+                <button class="radar-range-btn active" data-range="50">50 km</button>
+                <button class="radar-range-btn" data-range="150">150 km</button>
+                <button class="radar-range-btn" data-range="500">500 km</button>
+              </div>
+              <button class="btn btn-ghost" id="btn-radar-toggle-sweep">Sweep: ON</button>
+            </div>
+          </div>
+
+          <div class="radar-section-layout">
+            <div class="radar-scope-card">
+              <div class="radar-canvas-container">
+                <canvas id="radar-canvas" class="radar-canvas"></canvas>
+              </div>
+              <div id="radar-threat-banner" class="radar-threat-banner radar-threat-green">
+                <strong>✅ RADAR NOMINAL:</strong> Surrounding space clear. No immediate collision vectors detected.
+              </div>
+            </div>
+
+            <aside>
+              <section class="card">
+                <div class="card-head tight">
+                  <div>
+                    <span class="card-kicker">Tracked Contacts</span>
+                    <h3>Radar Target Manifest</h3>
+                  </div>
+                </div>
+                <div id="radar-target-list" class="radar-target-list"></div>
+                <p class="card-note" style="margin-top:10px;">
+                  TCA = -(r_rel · v_rel) / |v_rel|². Proximity Detection Agent evaluates tracks and recommends avoidance maneuvers when miss-distance &lt; 2.5 km.
+                </p>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ================= SENSOR MONITORING ================= -->
+        <section class="view" data-view="sensors">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Instrumentation · Live Avionics Bus</p>
+              <h1>Spacecraft Sensor Monitoring</h1>
+              <p class="page-sub">Direct telemetry from 7 simulated sensor suites with operating thresholds, live readouts, and historical sparklines.</p>
+            </div>
+            <div class="mission-controls">
+              <span class="pill pill-green">All 7 Sensor Busses Active</span>
+            </div>
+          </div>
+
+          <div id="sensor-cards-grid" class="knobs-grid" style="grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));"></div>
+        </section>
+
+        <!-- ================= PHYSICS LABORATORY ================= -->
+        <section class="view" data-view="physics">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Aerospace Engineering · Real-Time Formulations</p>
+              <h1>Physics Laboratory</h1>
+              <p class="page-sub">15 live mathematical and physical calculations updated in real time as simulation controls and spacecraft parameters change.</p>
+            </div>
+            <div class="mission-controls">
+              <span class="pill pill-blue">15 Live SI Calculations</span>
+              <span class="pill pill-purple">KaTeX / SI Formulations</span>
+            </div>
+          </div>
+
+          <div id="physics-lab-cards-container" class="physics-calc-grid"></div>
+        </section>
+
+        <!-- ================= SPACECRAFT VISUALIZATION ================= -->
+        <section class="view" data-view="visualization">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Spacecraft Visualization</p>
+              <h1>Trajectory Monitor</h1>
+              <p class="page-sub">Simplified 2D transfer schematic. Visual progress is not a physically accurate interplanetary trajectory.</p>
+            </div>
+            <div class="mission-controls">
+              <button class="btn btn-ghost" id="map-play" aria-pressed="true">
+                <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg>
+                <span>Pause animation</span>
+              </button>
+              <label class="speed-control">
+                <span>SCALE</span>
+                <select id="map-scale">
+                  <option value="1">Fit view</option>
+                  <option value="1.35">Zoom 1.35×</option>
+                </select>
+              </label>
+              <button class="btn btn-ghost" id="map-markers">Markers: On</button>
+            </div>
+          </div>
+
+          <div class="viz-grid">
+            <section class="card viz-main-card">
+              <div class="viz-toolbar">
+                <div class="viz-legend">
+                  <span><i class="legend-dot legend-earth"></i>Earth</span>
+                  <span><i class="legend-dot legend-mars"></i>Mars</span>
+                  <span><i class="legend-dot legend-ship"></i>Spacecraft</span>
+                  <span><i class="legend-dot legend-trajectory"></i>Trajectory</span>
+                  <span class="viz-event-legend" id="viz-event-legend"><i class="legend-dot legend-event"></i>Event marker</span>
+                </div>
+                <div class="clock-block">
+                  <span class="topbar-label">SOLAR RANGE</span>
+                  <span class="clock-value mono" id="viz-range">225.0 M km</span>
+                </div>
+              </div>
+              <div class="map-frame large">
+                <canvas id="mission-map" aria-label="Spacecraft trajectory from Earth to Mars"></canvas>
+              </div>
+              <div class="viz-progress-row">
+                <div class="progress-track"><span id="viz-progress-bar" style="width:0%"></span></div>
+                <span class="mono" id="viz-progress-text">0.0% · D+000</span>
+              </div>
+            </section>
+
+            <aside class="viz-sidebar">
+              <section class="card">
+                <div class="card-head"><div><span class="card-kicker">Navigation solution</span><h3>Trajectory Data</h3></div><span class="pill" id="viz-nav-confidence">±0.9%</span></div>
+                <dl class="data-list">
+                  <div><dt>Distance to Mars</dt><dd class="mono" id="nav-distance">225.0 M km</dd></div>
+                  <div><dt>Visual progress</dt><dd class="mono" id="nav-progress">0.0%</dd></div>
+                  <div><dt>Cruise velocity</dt><dd class="mono" id="nav-velocity">24.80 km/s</dd></div>
+                  <div><dt>Navigation uncertainty</dt><dd class="mono" id="nav-uncertainty">± 1,200 km</dd></div>
+                  <div><dt>Position uncertainty</dt><dd class="mono" id="nav-position">± 0.0 km</dd></div>
+                  <div><dt>ETA (simulated)</dt><dd class="mono" id="nav-eta">210.0 d</dd></div>
+                  <div><dt>Mid-course correction</dt><dd id="nav-correction">Scheduled</dd></div>
+                  <div><dt>Earth heliocentric v<sub>circ</sub></dt><dd class="mono" id="nav-earth-v">29.78 km/s</dd></div>
+                  <div><dt>Mars heliocentric v<sub>circ</sub></dt><dd class="mono" id="nav-mars-v">24.07 km/s</dd></div>
+                </dl>
+              </section>
+              <section class="card">
+                <div class="card-head"><div><span class="card-kicker">Reference physics</span><h3>Orbital Parameters</h3></div></div>
+                <dl class="data-list">
+                  <div><dt>Earth orbital period</dt><dd class="mono" id="ref-earth-period">365.3 d</dd></div>
+                  <div><dt>Mars orbital period</dt><dd class="mono" id="ref-mars-period">687.0 d</dd></div>
+                  <div><dt>Hohmann transfer time</dt><dd class="mono" id="ref-transfer">258.8 d</dd></div>
+                  <div><dt>Approx. transfer Δv</dt><dd class="mono" id="ref-dv">5.60 km/s</dd></div>
+                </dl>
+                <p class="card-note">Idealised circular orbits around the Sun; used for reference only. The animated path is illustrative.</p>
+              </section>
+              <section class="card event-marker-card">
+                <div class="card-head"><div><span class="card-kicker">Injected conditions</span><h3>Event Markers</h3></div></div>
+                <div id="viz-events" class="event-marker-list"><div class="empty-state small">No active events.</div></div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ================= AGENT CENTRE ================= -->
+        <section class="view" data-view="agents">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Autonomous Agent Centre</p>
+              <h1>Six Agents. One Mission.</h1>
+              <p class="page-sub">Each agent has independent logic and reports through the structured message bus. The Commander coordinates all recommendations.</p>
+            </div>
+            <div class="mission-controls">
+              <div class="cycle-meta">
+                <span class="mono" id="agent-cycle-meta">No coordination cycle yet</span>
+                <span class="mono dim" id="agent-bus-meta">0 messages</span>
+              </div>
+              <button class="btn btn-primary" id="btn-agent-cycle">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12a8 8 0 0 1 13.6-5.7L20 8.6" stroke-linecap="round"/><path d="M20 3.6v5h-5" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 12a8 8 0 0 1-13.6 5.7L4 15.4" stroke-linecap="round"/><path d="M4 20.4v-5h5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Run Agent Cycle
+              </button>
+            </div>
+          </div>
+
+          <div class="agent-phase-strip">
+            <div class="phase-steps">
+              <span class="phase-step done">Observe</span><i></i>
+              <span class="phase-step done">Analyse</span><i></i>
+              <span class="phase-step done">Recommend</span><i></i>
+              <span class="phase-step">Evaluate</span><i></i>
+              <span class="phase-step">Decide</span><i></i>
+              <span class="phase-step">Execute</span><i></i>
+              <span class="phase-step">Verify</span>
+            </div>
+            <span class="mono dim" id="agent-phase-note">Awaiting first cycle</span>
+          </div>
+
+          <div class="agent-grid" id="agent-grid"></div>
+
+          <section class="card bus-card">
+            <div class="card-head">
+              <div>
+                <span class="card-kicker">Structured messages</span>
+                <h3>Agent Message Bus</h3>
+              </div>
+              <span class="pill" id="bus-count">0 reports</span>
+            </div>
+            <div class="message-stream" id="agent-stream">
+              <div class="empty-state">No messages yet. Start the mission or run an agent cycle.</div>
+            </div>
+          </section>
+        </section>
+
+        <!-- ================= EMERGENCY SCENARIOS ================= -->
+        <section class="view" data-view="emergencies">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Emergency Scenario Centre</p>
+              <h1>Inject Mission Stress</h1>
+              <p class="page-sub">Trigger a predefined simulated emergency. The relevant agents report, the Commander evaluates, and the Decision Engine executes a validated response.</p>
+            </div>
+            <div class="mission-controls">
+              <button class="btn btn-ghost" id="btn-restore-systems">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3.5v3M12 17.5v3M3.5 12h3M17.5 12h3M6 6l2.1 2.1M15.9 15.9 18 18M18 6l-2.1 2.1M8.1 15.9 6 18" stroke-linecap="round"/><circle cx="12" cy="12" r="3.5"/></svg>
+                Restore Nominal Systems
+              </button>
+            </div>
+          </div>
+
+          <div class="emergency-layout">
+            <section class="emergency-summary card">
+              <div class="card-head"><div><span class="card-kicker">Aggregate condition</span><h3>Mission Condition</h3></div><span class="pill" id="emergency-risk-pill">LOW RISK</span></div>
+              <div class="risk-meter"><span id="emergency-risk-bar" style="width:10%"></span></div>
+              <div class="summary-grid">
+                <div><span>Active events</span><strong class="mono" id="emergency-active-count">0</strong></div>
+                <div><span>Responses completed</span><strong class="mono" id="emergency-responses">0</strong></div>
+                <div><span>Detected</span><strong class="mono" id="emergency-detected">0</strong></div>
+                <div><span>Comm link</span><strong class="mono" id="emergency-comm">STABLE</strong></div>
+              </div>
+              <p class="card-note">Simulation only. No real-world command is transmitted.</p>
+            </section>
+            <section class="card scenario-grid-card">
+              <div class="scenario-grid" id="scenario-grid"></div>
+            </section>
+            <section class="card active-effects-card">
+              <div class="card-head"><div><span class="card-kicker">Live modifiers</span><h3>Active Effects</h3></div></div>
+              <div id="active-effects" class="effects-list"><div class="empty-state small">No active modifiers.</div></div>
+              <div class="card-divider"></div>
+              <div class="card-head tight"><div><span class="card-kicker">Response timeline</span><h3>Scenario Log</h3></div></div>
+              <div class="scenario-log" id="scenario-log"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- ================= TELEMETRY ================= -->
+        <section class="view" data-view="telemetry">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Telemetry &amp; Analytics</p>
+              <h1>Mission Performance</h1>
+              <p class="page-sub">Rolling simulated telemetry. Samples are recorded every simulation tick; history resets with the mission.</p>
+            </div>
+            <div class="mission-controls">
+              <button class="btn btn-ghost" id="btn-telemetry-export">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19h14" stroke-linecap="round"/></svg>
+                Export Telemetry
+              </button>
+            </div>
+          </div>
+
+          <div class="telemetry-stats" id="telemetry-stats">
+            <div class="card stat-tile"><span>MISSION PERFORMANCE</span><strong class="mono" id="tel-performance">100</strong><small>Composite score</small></div>
+            <div class="card stat-tile"><span>EMERGENCIES DETECTED</span><strong class="mono" id="tel-emergencies">0</strong><small>Simulated events</small></div>
+            <div class="card stat-tile"><span>RESPONSES COMPLETED</span><strong class="mono" id="tel-responses">0</strong><small>Validated actions</small></div>
+            <div class="card stat-tile"><span>DECISIONS LOGGED</span><strong class="mono" id="tel-decisions">0</strong><small>Commander records</small></div>
+            <div class="card stat-tile"><span>AGENT CYCLES</span><strong class="mono" id="tel-cycles">0</strong><small>Coordination loops</small></div>
+            <div class="card stat-tile"><span>REJECTED ACTIONS</span><strong class="mono" id="tel-rejected">0</strong><small>Failed validation</small></div>
+          </div>
+
+          <div class="chart-grid">
+            <section class="card chart-card">
+              <div class="card-head"><div><span class="card-kicker">Consumables</span><h3>Resource History</h3></div><span class="pill">Live</span></div>
+              <div class="chart-frame"><canvas id="chart-resources"></canvas></div>
+              <div class="chart-legend"><span><i class="legend-dot legend-fuel"></i>Fuel</span><span><i class="legend-dot legend-power"></i>Power</span><span><i class="legend-dot legend-oxygen"></i>Oxygen</span></div>
+            </section>
+            <section class="card chart-card">
+              <div class="card-head"><div><span class="card-kicker">Transit</span><h3>Mission Progress</h3></div><span class="mono dim" id="chart-progress-note">0.0%</span></div>
+              <div class="chart-frame"><canvas id="chart-progress"></canvas></div>
+              <div class="chart-legend"><span><i class="legend-dot legend-progress"></i>Percent complete</span><span><i class="legend-dot legend-risk"></i>Risk index</span></div>
+            </section>
+            <section class="card chart-card">
+              <div class="card-head"><div><span class="card-kicker">Systems</span><h3>Equipment &amp; Thermal</h3></div><span class="mono dim" id="chart-health-note">100.0%</span></div>
+              <div class="chart-frame"><canvas id="chart-health"></canvas></div>
+              <div class="chart-legend"><span><i class="legend-dot legend-health"></i>Equipment health</span><span><i class="legend-dot legend-temp"></i>Temperature °C</span></div>
+            </section>
+            <section class="card chart-card">
+              <div class="card-head"><div><span class="card-kicker">Throughput</span><h3>Agent Activity</h3></div><span class="pill" id="chart-agent-note">0 messages</span></div>
+              <div class="chart-frame"><canvas id="chart-agents"></canvas></div>
+              <div class="chart-legend"><span><i class="legend-dot legend-reports"></i>Agent cycles</span><span><i class="legend-dot legend-decisions"></i>Decisions logged</span></div>
+            </section>
+          </div>
+
+          <section class="card telemetry-table-card">
+            <div class="card-head"><div><span class="card-kicker">Consumption ledger</span><h3>Resource Accounting</h3></div><span class="pill">Simulated %</span></div>
+            <div class="resource-ledger" id="resource-ledger"></div>
+          </section>
+        </section>
+
+        <!-- ================= DECISIONS ================= -->
+        <section class="view" data-view="decisions">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Decision History</p>
+              <h1>Traceable Autonomy</h1>
+              <p class="page-sub">Every Commander decision is recorded with the observations, recommendations and validation checks that produced it.</p>
+            </div>
+            <div class="mission-controls">
+              <button class="btn btn-ghost" id="btn-export-log">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 19h14" stroke-linecap="round"/></svg>
+                Export JSON
+              </button>
+              <button class="btn btn-danger-ghost" id="btn-clear-log">Clear History</button>
+            </div>
+          </div>
+
+          <div class="decision-toolbar">
+            <div class="filter-group" id="decision-filters">
+              <button class="filter-chip active" data-filter="all">All</button>
+              <button class="filter-chip" data-filter="decision">Decisions</button>
+              <button class="filter-chip" data-filter="event">Events</button>
+              <button class="filter-chip" data-filter="observation">Observations</button>
+              <button class="filter-chip" data-filter="execution">Executions</button>
+            </div>
+            <span class="mono dim" id="decision-count">0 entries</span>
+          </div>
+
+          <div class="decision-layout">
+            <section class="card decision-list-card">
+              <div class="decision-list" id="decision-list">
+                <div class="empty-state">No mission history yet.</div>
+              </div>
+            </section>
+            <aside class="card decision-aside">
+              <div class="card-head"><div><span class="card-kicker">Protocol</span><h3>Decision Pipeline</h3></div></div>
+              <ol class="pipeline">
+                <li><span>01</span><div><strong>Observation</strong><small>Agents read shared state</small></div></li>
+                <li><span>02</span><div><strong>Analysis</strong><small>Independent rule evaluation</small></div></li>
+                <li><span>03</span><div><strong>Recommendation</strong><small>Structured reports published</small></div></li>
+                <li><span>04</span><div><strong>Evaluation</strong><small>Commander scores all actions</small></div></li>
+                <li><span>05</span><div><strong>Decision</strong><small>Priority-weighted selection</small></div></li>
+                <li><span>06</span><div><strong>Execution</strong><small>Validation, then state change</small></div></li>
+                <li><span>07</span><div><strong>Verification</strong><small>Post-condition check</small></div></li>
+              </ol>
+              <div class="card-divider"></div>
+              <div class="aside-stat"><span>Conflicts resolved</span><strong class="mono" id="aside-conflicts">0</strong></div>
+              <div class="aside-stat"><span>Last decision</span><strong class="mono" id="aside-last">—</strong></div>
+              <p class="card-note">Priority order: safety → essential systems → resources → mission continuity → science.</p>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ================= SETTINGS ================= -->
+        <section class="view" data-view="settings">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Configuration</p>
+              <h1>Mission Settings</h1>
+              <p class="page-sub">Settings affect the local simulation only and are stored in your browser.</p>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <section class="card">
+              <div class="card-head"><div><span class="card-kicker">Simulation</span><h3>Runtime Options</h3></div></div>
+              <div class="setting-row">
+                <div><strong>Automatic agent monitoring</strong><small>Run a coordination cycle every 12 simulated days.</small></div>
+                <label class="switch"><input type="checkbox" id="set-auto-agents" checked><span></span></label>
+              </div>
+              <div class="setting-row">
+                <div><strong>Default simulation rate</strong><small>Applied when the mission starts.</small></div>
+                <select id="set-default-speed" class="input select-input">
+                  <option value="1">1×</option>
+                  <option value="2" selected>2×</option>
+                  <option value="4">4×</option>
+                  <option value="8">8×</option>
+                </select>
+              </div>
+              <div class="setting-row">
+                <div><strong>Mission duration (simulated days)</strong><small>Sets the transit scale used by the progress model.</small></div>
+                <span class="mono">210 d</span>
+              </div>
+              <div class="setting-actions"><button class="btn btn-primary" id="btn-save-settings">Save Settings</button><button class="btn btn-ghost" id="btn-default-settings">Restore Defaults</button></div>
+            </section>
+
+            <section class="card">
+              <div class="card-head"><div><span class="card-kicker">Agent thresholds</span><h3>Warning &amp; Critical Limits</h3></div></div>
+              <div class="threshold-grid">
+                <label><span>Fuel warning</span><input type="number" class="input mono" data-threshold="fuelWarn" min="1" max="99"></label>
+                <label><span>Fuel critical</span><input type="number" class="input mono" data-threshold="fuelCritical" min="0" max="98"></label>
+                <label><span>Power warning</span><input type="number" class="input mono" data-threshold="powerWarn" min="1" max="99"></label>
+                <label><span>Power critical</span><input type="number" class="input mono" data-threshold="powerCritical" min="0" max="98"></label>
+                <label><span>Oxygen warning</span><input type="number" class="input mono" data-threshold="oxygenWarn" min="1" max="99"></label>
+                <label><span>Oxygen critical</span><input type="number" class="input mono" data-threshold="oxygenCritical" min="0" max="98"></label>
+              </div>
+              <p class="card-note">Thresholds are simulation parameters, not real spacecraft operating limits. Critical must be below warning.</p>
+              <div class="setting-actions"><button class="btn btn-primary" id="btn-save-thresholds">Apply Thresholds</button></div>
+            </section>
+
+            <section class="card physics-card">
+              <div class="card-head"><div><span class="card-kicker">Validation</span><h3>Physics Self-Test</h3></div><span class="pill" id="physics-status">Not run</span></div>
+              <p class="card-note">Deterministic calculations using G = 6.67430×10⁻¹¹ N·m²/kg². Compared against published reference values.</p>
+              <button class="btn btn-primary" id="btn-physics-test">Run Physics Validation</button>
+              <div class="physics-results" id="physics-results">
+                <div class="empty-state small">Run the self-test to verify equations.</div>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-head"><div><span class="card-kicker">Mission data</span><h3>Data Management</h3></div></div>
+              <div class="data-actions">
+                <button class="btn btn-ghost" id="btn-export-mission">Export Full Mission Archive</button>
+                <button class="btn btn-ghost" id="btn-reset-settings-mission">Reset Mission</button>
+                <button class="btn btn-danger-ghost" id="btn-clear-settings-decisions">Clear Decision History</button>
+              </div>
+              <p class="card-note">Exports are generated locally in your browser. No data leaves this device.</p>
+            </section>
+
+            <section class="card limitations-card">
+              <div class="card-head"><div><span class="card-kicker">Documentation</span><h3>Simulation Limitations</h3></div></div>
+              <ul class="limitations-list">
+                <li>All mission data is simulated; nothing here represents real telemetry.</li>
+                <li>Emergency scenarios are predefined and rule-driven.</li>
+                <li>Agent decisions use simplified deterministic rules, not an LLM.</li>
+                <li>Orbital calculations assume idealised circular orbits.</li>
+                <li>The Earth–Mars animation is a visual model, not an accurate transfer trajectory.</li>
+                <li>No spacecraft or ground system is connected.</li>
+              </ul>
+            </section>
+
+            <section class="card about-card">
+              <div class="card-head"><div><span class="card-kicker">System</span><h3>Runtime Information</h3></div></div>
+              <dl class="data-list">
+                <div><dt>Version</dt><dd class="mono">MissionMind 2.0.0</dd></div>
+                <div><dt>Architecture</dt><dd class="mono">Multi-Agent Simulation · Vanilla JS</dd></div>
+                <div><dt>Message bus</dt><dd class="mono" id="about-bus">0 messages</dd></div>
+                <div><dt>Session errors</dt><dd class="mono" id="about-errors">0</dd></div>
+                <div><dt>Storage</dt><dd class="mono">localStorage (settings)</dd></div>
+              </dl>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div class="toast-container" id="toasts" aria-live="polite"></div>
+
+  <div class="modal-backdrop" id="modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <div>
+          <span class="card-kicker" id="modal-kicker">Detail</span>
+          <h2 id="modal-title">Record</h2>
+        </div>
+        <button class="icon-btn" id="modal-close" aria-label="Close dialog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 6 12 12M18 6 6 18" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="js/core/utils.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/core/message-bus.js"></script>
+  <script src="js/mission-state.js"></script>
+  <script src="js/simulation/physics-engine.js"></script>
+  <script src="js/simulation/orbital-engine.js"></script>
+  <script src="js/simulation/spacecraft-engine.js"></script>
+  <script src="js/simulation/energy-engine.js"></script>
+  <script src="js/simulation/sensor-engine.js"></script>
+  <script src="js/simulation/radar-engine.js"></script>
+  <script src="js/core/control-manager.js"></script>
+  <script src="js/agents/base-agent.js"></script>
+  <script src="js/agents/navigation-agent.js"></script>
+  <script src="js/agents/fuel-agent.js"></script>
+  <script src="js/agents/risk-agent.js"></script>
+  <script src="js/agents/systems-agent.js"></script>
+  <script src="js/agents/science-agent.js"></script>
+  <script src="js/agents/energy-agent.js"></script>
+  <script src="js/agents/proximity-agent.js"></script>
+  <script src="js/agents/propulsion-agent.js"></script>
+  <script src="js/agents/commander-agent.js"></script>
+  <script src="js/core/decision-engine.js"></script>
+  <script src="js/core/agent-manager.js"></script>
+  <script src="js/scenarios/solar-storm.js"></script>
+  <script src="js/scenarios/fuel-shortage.js"></script>
+  <script src="js/scenarios/communication-failure.js"></script>
+  <script src="js/scenarios/power-failure.js"></script>
+  <script src="js/core/event-manager.js"></script>
+  <script src="js/simulation-engine.js"></script>
+  <script src="js/ui/spacecraft-view.js"></script>
+  <script src="js/ui/orbital-controls.js"></script>
+  <script src="js/ui/thruster-controls.js"></script>
+  <script src="js/ui/solar-panel-controls.js"></script>
+  <script src="js/ui/radar-display.js"></script>
+  <script src="js/ui/sensor-display.js"></script>
+  <script src="js/ui/physics-lab.js"></script>
+  <script src="js/ui/mission-map.js"></script>
+  <script src="js/ui/charts.js"></script>
+  <script src="js/ui/dashboard.js"></script>
+  <script src="js/ui/agent-cards.js"></script>
+  <script src="js/ui/telemetry.js"></script>
+  <script src="js/ui/decision-log.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
