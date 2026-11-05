@@ -201,6 +201,7 @@
       if (name === 'sensors' && this.app.sensorDisplay) setTimeout(() => this.app.sensorDisplay.render(), 40);
       if (name === 'physics' && this.app.physicsLab) setTimeout(() => this.app.physicsLab.render(), 40);
       if (name === 'thrusters' && this.app.thrusterControls) setTimeout(() => this.app.thrusterControls.render(), 40);
+      if (name === 'flightops' && this.app.flightControls) setTimeout(() => this.app.flightControls.render(), 40);
       if (name === 'solar' && this.app.solarPanelControls) setTimeout(() => this.app.solarPanelControls.render(), 40);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }

@@ -44,6 +44,8 @@
       // Telemetry cache
       this.lastAcceleration = { x: 0, y: 0, z: 0, magnitude: 0 };
       this.totalFlowRateKgS = 0;
+
+      MM.bus.on('mission:reset', () => this.reset());
     }
 
     get totalMass() {
@@ -145,7 +147,7 @@
         flowRateKgS: U.round(this.totalFlowRateKgS, 3),
         remainingKg: U.round(this.fuelMass, 1),
         capacityKg: this.maxFuel,
-        status: !this.feedValveOpen ? 'isolated' : this.fuelPumpPercent < 25 ? 'low-feed' : this.fuelMass <= 0 ? 'empty' : 'nominal'
+        status: !this.feedValveOpen ? 'isolated' : this.fuelMass <= 0 ? 'empty' : this.fuelPumpPercent < 25 ? 'low-feed' : 'nominal'
       };
     }
 
@@ -171,6 +173,49 @@
         this.stateManager.addLog('fuel', 'Main Propellant Depleted', 'Fuel tanks have zero usable mass remaining. All engines cut off.', { severity: 'critical' });
       }
       return used;
+    }
+
+    /**
+     * Restore the propulsion plant to its initial condition on mission reset.
+     */
+    reset() {
+      this.fuelMass = CFG.SPACECRAFT.initialFuelMass;
+      this.pitchDeg = 0;
+      this.yawDeg = 0;
+      this.rollDeg = 0;
+      this.pitchRate = 0;
+      this.yawRate = 0;
+      this.rollRate = 0;
+
+      ['x', 'y', 'z'].forEach((axis) => {
+        const t = this.thrusters[axis];
+        t.cmd = 0;
+        t.thrustN = 0;
+        t.tempC = 22;
+        t.active = false;
+        t.status = 'nominal';
+      });
+
+      this.propulsionMode = 'chemical';
+      this.emergencyShutdownActive = false;
+      this.fuelPumpPercent = 100;
+      this.feedValveOpen = true;
+      this.feedPressureBar = this.feedPressureNominalBar;
+      this.lastAcceleration = { x: 0, y: 0, z: 0, magnitude: 0 };
+      this.totalFlowRateKgS = 0;
+      this.recalculateThrust();
+
+      this.stateManager.update((s) => {
+        s.spacecraft.fuelMass = this.fuelMass;
+        s.spacecraft.mass = this.totalMass;
+        s.spacecraft.acceleration = this.lastAcceleration;
+        s.spacecraft.orientation = { pitch: 0, yaw: 0, roll: 0 };
+        s.propulsionMode = this.propulsionMode;
+        s.fuelSystem = this.getFuelTelemetry();
+      }, 'spacecraft:reset');
+
+      MM.bus.emit('fuel:updated', this.getFuelTelemetry());
+      MM.bus.emit('thrusters:update', {});
     }
 
     /**

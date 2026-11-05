@@ -17,6 +17,7 @@
 
     const orbitalEngine = new MM.OrbitalEngine(stateManager);
     const spacecraftEngine = new MM.SpacecraftEngine(stateManager);
+    const descentEngine = new MM.DescentEngine(stateManager, spacecraftEngine);
     const energyEngine = new MM.EnergyEngine(stateManager);
     const radarEngine = new MM.RadarEngine(stateManager);
     const sensorEngine = new MM.SensorEngine(stateManager);
@@ -33,6 +34,7 @@
       simulation,
       orbitalEngine,
       spacecraftEngine,
+      descentEngine,
       energyEngine,
       radarEngine,
       sensorEngine,
@@ -42,6 +44,7 @@
       spacecraftView: null,
       orbitalControls: null,
       thrusterControls: null,
+      flightControls: null,
       solarPanelControls: null,
       radarDisplay: null,
       sensorDisplay: null,
@@ -78,6 +81,10 @@
       const thrusterControls = new MM.ThrusterControlsView(MM.app);
       MM.app.thrusterControls = thrusterControls;
       thrusterControls.init();
+
+      const flightControls = new MM.FlightControlsView(MM.app);
+      MM.app.flightControls = flightControls;
+      flightControls.init();
 
       const solarPanelControls = new MM.SolarPanelControlsView(MM.app);
       MM.app.solarPanelControls = solarPanelControls;

@@ -126,7 +126,13 @@
         valveBtn.classList.toggle('closed', !open);
         valveBtn.setAttribute('aria-pressed', String(open));
         this.setText('fuel-valve-label', open ? 'FEED VALVE OPEN' : 'FEED VALVE ISOLATED');
+        const hint = valveBtn.querySelector('.valve-hint');
+        if (hint) hint.textContent = open ? 'click to isolate' : 'click to open';
       }
+
+      document.querySelectorAll('[data-fuel-pump]').forEach((button) => {
+        button.classList.toggle('active', Number(button.dataset.fuelPump) === Math.round(fuel.pumpPercent || 0));
+      });
     }
 
     /* ---------------- Cabin thermal controller ---------------- */
@@ -231,6 +237,9 @@
 
       document.querySelectorAll('[data-thermal-mode]').forEach((button) => {
         button.classList.toggle('active', button.dataset.thermalMode === mode);
+      });
+      document.querySelectorAll('[data-thermal-target]').forEach((button) => {
+        button.classList.toggle('active', Number(button.dataset.thermalTarget) === target);
       });
 
       const manual = $('#thermal-manual-controls');

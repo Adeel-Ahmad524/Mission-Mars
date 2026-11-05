@@ -59,6 +59,11 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2v6M12 16v6M2 12h6M16 12h6"/><circle cx="12" cy="12" r="4"/></svg>
           <span>Thruster Control</span>
         </button>
+        <button class="nav-item" data-view="flightops">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7h10M18 7h2M4 12h4M12 12h8M4 17h8M16 17h4" stroke-linecap="round"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="14" cy="17" r="2"/></svg>
+          <span>Flight Operations</span>
+          <span class="nav-badge">OPS</span>
+        </button>
         <button class="nav-item" data-view="solar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9l-2.1 2.1M7 17l-2.1 2.1"/></svg>
           <span>Solar Energy</span>
@@ -525,6 +530,7 @@
 
                 <dl class="data-list" style="margin-top:14px;">
                   <div><dt>Specific Energy ε</dt><dd class="mono" id="telemetry-specific-energy">-29.42 MJ/kg</dd></div>
+                  <div><dt>Local Gravity g</dt><dd class="mono" id="telemetry-local-g">9.44 m/s²</dd></div>
                   <div><dt>Orbital Period T</dt><dd class="mono" id="telemetry-orbit-period">92.5 min</dd></div>
                   <div><dt>Periapsis (r_p)</dt><dd class="mono" id="telemetry-orbit-peri">400 km</dd></div>
                   <div><dt>Apoapsis (r_a)</dt><dd class="mono" id="telemetry-orbit-apo">400 km</dd></div>
@@ -685,6 +691,227 @@
                 <input type="range" id="input-orient-roll" min="-180" max="180" step="2" value="0" style="width:100%; accent-color:#38bdf8;">
               </div>
               <p class="card-note">Orientation angles transform spacecraft-local thruster axes into inertial world frame acceleration.</p>
+            </section>
+          </div>
+        </section>
+
+        <!-- ================= FLIGHT OPERATIONS (MANUAL CONTROLS) ================= -->
+        <section class="view" data-view="flightops">
+          <div class="page-head">
+            <div>
+              <p class="eyebrow">Manual Flight Operations · Direct Authority</p>
+              <h1>Flight Operations Console</h1>
+              <p class="page-sub">Operator-level control of propellant feed, cabin thermal loop, local gravity, and the Mars terminal-descent trainer. All responses are simulated.</p>
+            </div>
+            <div class="mission-controls">
+              <span class="pill pill-blue">Manual Authority</span>
+              <span class="pill pill-green">Live Physics</span>
+              <button class="btn btn-ghost" id="btn-flightops-reset-descent">Reset Descent</button>
+            </div>
+          </div>
+
+          <div class="flightops-grid">
+            <!-- ---------------- Fuel operator ---------------- -->
+            <section class="card ops-card ops-fuel">
+              <div class="card-head">
+                <div>
+                  <span class="card-kicker">Propellant Management</span>
+                  <h3>Fuel Operator</h3>
+                </div>
+                <span class="pill pill-green" id="fuel-ops-status">NOMINAL</span>
+              </div>
+
+              <div class="ops-readouts">
+                <div class="ops-stat">
+                  <span>PROPELLANT MASS</span>
+                  <strong class="mono" id="fuel-ops-remaining">12,500 kg</strong>
+                  <small id="fuel-ops-percent">83.3% of 15,000 kg</small>
+                </div>
+                <div class="ops-stat">
+                  <span>FEED PRESSURE</span>
+                  <strong class="mono" id="fuel-pressure">25.0 bar</strong>
+                  <div class="progress-track ops-bar"><span id="fuel-pressure-bar" class="bar-green" style="width:100%"></span></div>
+                </div>
+                <div class="ops-stat">
+                  <span>MASS FLOW</span>
+                  <strong class="mono" id="fuel-flow">0.000 kg/s</strong>
+                  <small>Feed: <b id="fuel-feed-state">OPEN</b></small>
+                </div>
+              </div>
+
+              <div class="ops-control-row">
+                <label for="fuel-pump-input">PUMP THROTTLE <span class="mono" id="fuel-pump-value">100%</span></label>
+                <input type="range" id="fuel-pump-input" min="0" max="100" step="5" value="100">
+                <div class="ops-preset-row">
+                  <button type="button" class="filter-chip" data-fuel-pump="0">0%</button>
+                  <button type="button" class="filter-chip" data-fuel-pump="25">25%</button>
+                  <button type="button" class="filter-chip" data-fuel-pump="50">50%</button>
+                  <button type="button" class="filter-chip" data-fuel-pump="75">75%</button>
+                  <button type="button" class="filter-chip active" data-fuel-pump="100">100%</button>
+                </div>
+              </div>
+
+              <button type="button" class="valve-toggle open" id="btn-fuel-valve" aria-pressed="true">
+                <span class="valve-dot"></span>
+                <span id="fuel-valve-label">FEED VALVE OPEN</span>
+                <span class="valve-hint">click to isolate</span>
+              </button>
+
+              <div class="ops-actions">
+                <button type="button" class="btn btn-ghost" id="btn-fuel-conserve">Fuel Conservation 50%</button>
+                <span class="ops-inline-note">Pump output scales <b>maximum thrust</b> and <b>propellant mass flow</b>. <span class="mono" id="fuel-pump-readout">100%</span></span>
+              </div>
+              <p class="card-note">Closing the feed valve zeroes every thruster command immediately. Opening it re-arms the manifold but does not re-ignite engines.</p>
+            </section>
+
+            <!-- ---------------- Thermal controller ---------------- -->
+            <section class="card ops-card ops-thermal">
+              <div class="card-head">
+                <div>
+                  <span class="card-kicker">Cabin Thermal Loop</span>
+                  <h3>Inner Temperature Controller</h3>
+                </div>
+                <span class="pill pill-green" id="thermal-mode-pill">AUTO</span>
+              </div>
+
+              <div class="thermal-hero">
+                <strong class="mono" id="thermal-current">22.0 °C</strong>
+                <small id="thermal-status">Within comfort band</small>
+              </div>
+
+              <div class="thermal-band" aria-hidden="true">
+                <span class="thermal-band-zone"></span>
+                <span class="thermal-band-fill" id="thermal-band-fill"></span>
+                <span class="thermal-band-target" id="thermal-band-target"></span>
+                <span class="thermal-band-marker" id="thermal-band-marker"></span>
+              </div>
+              <div class="thermal-scale"><span>10 °C</span><span>16</span><span>22</span><span>29</span><span>35 °C</span></div>
+
+              <div class="ops-control-row">
+                <label for="thermal-target-input">TARGET SETPOINT <span class="mono" id="thermal-target-readout">22.0 °C</span></label>
+                <input type="range" id="thermal-target-input" min="16" max="28" step="0.5" value="22">
+                <div class="ops-preset-row">
+                  <button type="button" class="filter-chip" data-thermal-target="18">18 °C</button>
+                  <button type="button" class="filter-chip" data-thermal-target="21">21 °C</button>
+                  <button type="button" class="filter-chip active" data-thermal-target="22">22 °C</button>
+                  <button type="button" class="filter-chip" data-thermal-target="24">24 °C</button>
+                  <button type="button" class="filter-chip" data-thermal-target="26">26 °C</button>
+                </div>
+              </div>
+
+              <div class="ops-mode-row" role="group" aria-label="Thermal mode">
+                <button type="button" class="mode-pill active" data-thermal-mode="auto">AUTO</button>
+                <button type="button" class="mode-pill" data-thermal-mode="manual">MANUAL</button>
+                <button type="button" class="mode-pill" data-thermal-mode="off">OFF</button>
+                <span class="mono ops-target-readout" id="thermal-target-value">22.0 °C</span>
+              </div>
+
+              <div class="ops-manual-block" id="thermal-manual-controls" hidden>
+                <div class="ops-control-row">
+                  <label for="thermal-heater-input">HEATER OUTPUT <span class="mono" id="thermal-heater-readout">0%</span></label>
+                  <input type="range" id="thermal-heater-input" min="0" max="100" step="5" value="0">
+                </div>
+                <div class="ops-control-row">
+                  <label for="thermal-cooler-input">COOLER OUTPUT <span class="mono" id="thermal-cooler-readout">0%</span></label>
+                  <input type="range" id="thermal-cooler-input" min="0" max="100" step="5" value="0">
+                </div>
+              </div>
+
+              <p class="card-note">AUTO drives the cabin toward the setpoint. MANUAL uses the heater and cooler percentages directly. OFF lets the cabin drift. Comfort band 16–29 °C.</p>
+            </section>
+
+            <!-- ---------------- Gravity at point ---------------- -->
+            <section class="card ops-card ops-gravity">
+              <div class="card-head">
+                <div>
+                  <span class="card-kicker">Gravitational Field</span>
+                  <h3>Gravity At Current Point</h3>
+                </div>
+                <span class="pill pill-blue" id="gravity-body">EARTH</span>
+              </div>
+
+              <div class="gravity-hero">
+                <strong class="mono" id="gravity-local">9.44 m/s²</strong>
+                <small>g = G · M / r² at the spacecraft's orbital radius</small>
+              </div>
+
+              <div class="gravity-layout">
+                <div class="gravity-visual" aria-hidden="true">
+                  <span class="gravity-body-dot"></span>
+                  <span class="gravity-orbit-ring"></span>
+                  <span class="gravity-ship-dot" id="gravity-ship-dot"></span>
+                </div>
+
+                <div class="gravity-data">
+                  <dl class="data-list">
+                    <div><dt>Central body</dt><dd class="mono" id="gravity-central-body">Earth</dd></div>
+                    <div><dt>Orbital radius (r)</dt><dd class="mono" id="gravity-radius">6,771 km</dd></div>
+                    <div><dt>Altitude above surface</dt><dd class="mono" id="gravity-altitude">400 km</dd></div>
+                    <div><dt>Surface gravity</dt><dd class="mono" id="gravity-surface">9.81 m/s²</dd></div>
+                    <div><dt>Escape velocity at r</dt><dd class="mono" id="gravity-escape">10.85 km/s</dd></div>
+                  </dl>
+                  <p class="card-note">Change the central body or orbital radius in <b>Orbital Mechanics</b>; this readout updates immediately.</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- ---------------- Descent speed controller ---------------- -->
+            <section class="card ops-card ops-descent">
+              <div class="card-head">
+                <div>
+                  <span class="card-kicker">Mars Terminal Descent</span>
+                  <h3>Landing Speed Controller</h3>
+                </div>
+                <span class="pill pill-blue" id="descent-status">IDLE</span>
+              </div>
+
+              <div class="descent-layout">
+                <div class="descent-track">
+                  <div class="descent-track-line"></div>
+                  <div class="descent-chute-line" id="descent-chute-line"><span>420 m · RETRO IGNITION</span></div>
+                  <div class="descent-altitude-bar" id="descent-altitude-bar"></div>
+                  <div class="descent-ground">MARS SURFACE · 0 m</div>
+                  <div class="descent-track-readout mono" id="descent-altitude-label">2,500 m</div>
+                </div>
+
+                <div class="descent-panel">
+                  <div class="ops-readouts">
+                    <div class="ops-stat"><span>ALTITUDE</span><strong class="mono" id="descent-altitude">2,500 m</strong><small id="descent-phase-label">IDLE</small></div>
+                    <div class="ops-stat"><span>DESCENT RATE</span><strong class="mono" id="descent-rate">25.0 m/s</strong><small>Positive = downward</small></div>
+                    <div class="ops-stat"><span>TARGET RATE</span><strong class="mono" id="descent-target">1.5 m/s</strong><small>Safe limit 3.0 m/s</small></div>
+                    <div class="ops-stat"><span>RETRO THROTTLE</span><strong class="mono" id="descent-throttle">0%</strong><small>Hover ≈ 76%</small></div>
+                    <div class="ops-stat"><span>LOCAL GRAVITY</span><strong class="mono" id="descent-gravity">3.71 m/s²</strong><small>Mars surface</small></div>
+                    <div class="ops-stat"><span>PROPELLANT USED</span><strong class="mono" id="descent-fuel">0.0 kg</strong><small>Shared main tanks</small></div>
+                  </div>
+
+                  <div class="ops-control-row">
+                    <label for="descent-target-input">DESCENT SPEED TARGET <span class="mono" id="descent-target-readout">1.5 m/s</span></label>
+                    <input type="range" id="descent-target-input" min="0.5" max="15" step="0.1" value="1.5">
+                  </div>
+
+                  <div class="ops-mode-row" role="group" aria-label="Descent guidance mode">
+                    <button type="button" class="mode-pill active" data-descent-mode="auto">AUTOPILOT</button>
+                    <button type="button" class="mode-pill" data-descent-mode="manual">MANUAL</button>
+                  </div>
+
+                  <div class="ops-manual-block" id="descent-manual-controls" hidden>
+                    <div class="ops-control-row">
+                      <label for="descent-throttle-input">MANUAL RETRO THROTTLE <span class="mono" id="descent-throttle-readout">0%</span></label>
+                      <input type="range" id="descent-throttle-input" min="0" max="100" step="1" value="0">
+                    </div>
+                  </div>
+
+                  <div class="ops-actions">
+                    <button type="button" class="btn btn-primary" id="btn-descent-start">Start Descent</button>
+                    <button type="button" class="btn btn-ghost" id="btn-descent-hold" disabled>Hold Altitude</button>
+                    <button type="button" class="btn btn-danger-ghost" id="btn-descent-abort">Abort</button>
+                  </div>
+
+                  <div class="descent-banner" id="descent-banner">Parachute descent begins at 2,500 m. Retro-thrust terminal guidance starts below 420 m. Safe touchdown limit: 3.0 m/s.</div>
+                </div>
+              </div>
+
+              <p class="card-note">The descent trainer runs in real time, independent of the mission clock, and draws propellant from the shared main tanks. Touchdown above 3.0 m/s is logged as a failure.</p>
             </section>
           </div>
         </section>
@@ -1266,6 +1493,7 @@
   <script src="js/simulation/physics-engine.js"></script>
   <script src="js/simulation/orbital-engine.js"></script>
   <script src="js/simulation/spacecraft-engine.js"></script>
+  <script src="js/simulation/landing-engine.js"></script>
   <script src="js/simulation/energy-engine.js"></script>
   <script src="js/simulation/sensor-engine.js"></script>
   <script src="js/simulation/radar-engine.js"></script>
@@ -1291,6 +1519,7 @@
   <script src="js/ui/spacecraft-view.js"></script>
   <script src="js/ui/orbital-controls.js"></script>
   <script src="js/ui/thruster-controls.js"></script>
+  <script src="js/ui/flight-controls.js"></script>
   <script src="js/ui/solar-panel-controls.js"></script>
   <script src="js/ui/radar-display.js"></script>
   <script src="js/ui/sensor-display.js"></script>
